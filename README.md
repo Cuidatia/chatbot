@@ -33,5 +33,5 @@ Para lanzar el frontend, simplemente habría que ejecutar el archivo main.html p
 ## DEMO
 Podéis encontrar una demostración del funcionamiento de este chatbot en la siguiente dirección:
 
-- `https://drive.google.com/drive/folders/1AXCzH4GY0DMSF8IypAKcWawuAzGYZeKU?usp=sharing`
+- `https://drive.google.com/file/d/1HJPH-K-rfVXc1VaMrVGYjXDRygvA-usS/view?usp=sharing`
 

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type='text/javascript' src="https://www.botlibre.com/scripts/sdk.js"></script>
+        <script type='text/javascript'>
+            SDK.applicationId = "4400235875314709817";
+            var sdk = new SDKConnection();
+            var web = new WebAvatar();
+            web.version = 8.5;
+            web.connection = sdk;
+            web.avatar = "32958241";
+            web.nativeVoiceName = "Microsoft Pablo - Spanish (Spain)";
+            web.nativeVoice = true;
+            web.lang = "es";
+            web.boxLocation = "bottom-left";
+            web.width = "150";
+            web.height = "150";
+            web.createBox();
+
+            let liLista = '';
+            var text;
+
+            const reconocer_voz = () => {
+                document.getElementById('startButton').textContent = 'Escuchando...'
+                $.ajax({
+                    type: "GET",
+                    url: "http://127.0.0.1:5000/reconocer-voz",
+                    contentType: "application/json",
+                    success: function (response) {
+                        document.getElementById('startButton').textContent = 'Pulsa para hablar'
+                        anadirAlChat('msjUser',response);
+                        enviarPregunta(response);
+                    },
+                    error: function (error) {
+                        document.getElementById('startButton').textContent = 'Pulsa para hablar'
+                        web.addMessage('No te entiendo', "Smile", "", "");
+                        web.processMessages();
+                    }
+                })
+            }
+
+            const enviarPregunta = (pregunta) => {
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:5000/chatbot",
+                    contentType: "application/json",
+                    data: JSON.stringify({ 'text': pregunta }),
+                    success: function (response) {
+                        anadirAlChat('msjBot',response);
+                        web.addMessage(response, "Smile", "", "");
+                        web.processMessages();
+                    },
+                    error: function (error) {
+                        anadirAlChat('msjBot','No te entiendo');
+                        web.addMessage('No te entiendo', "Smile", "", "");
+                        web.processMessages();
+                    }
+                })
+            }
+
+            const anadirAlChat = (usuario, msj) => {
+                const nuevoLi = document.createElement('li');
+                nuevoLi.textContent = msj;
+                nuevoLi.classList = usuario;
+                const chatUl = document.getElementById('chat');
+                chatUl.appendChild(nuevoLi);
+            }
+        </script>
+        <style>
+            ul{
+                margin: 0px;
+                padding: 0px;
+            }
+            li{
+                list-style-type: none;
+                padding: 10px;
+            }
+            .msjBot{
+                text-align: left;
+            }
+            .msjUser{
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        Esto es un CHATBOT de voz!
+        <br/>
+        <br/>
+        <button id="startButton" onclick=reconocer_voz()>Pulsa para hablar</button>
+        <br/>
+        <div style="width: 300px; height: 500px; border: 1px solid black; background-color: #fff; color: black; overflow-y: scroll; scrollbar-width: thin;">
+            <ul id="chat">
+
+            </ul>
+        </div>
+    </body>
+</html>
